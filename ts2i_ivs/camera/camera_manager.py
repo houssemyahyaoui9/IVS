@@ -1,0 +1,3 @@
+"""
+CameraManager pluggable
+"""

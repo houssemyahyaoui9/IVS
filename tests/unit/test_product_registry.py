@@ -1,0 +1,4 @@
+"""
+ProductRegistry
+"""
+import pytest

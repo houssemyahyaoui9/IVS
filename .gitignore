@@ -1,0 +1,148 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# TS2I IVS v7.0 — .gitignore
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ── Python bytecode / build ──────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+.eggs/
+build/
+dist/
+develop-eggs/
+.installed.cfg
+*.manifest
+*.spec
+pip-wheel-metadata/
+share/python-wheels/
+
+# ── Virtualenv / package managers ────────────────────────────────────────────
+.venv/
+venv/
+ENV/
+env/
+.python-version
+poetry.lock
+uv.lock
+Pipfile.lock
+pip-log.txt
+pip-delete-this-directory.txt
+
+# ── Testing / coverage ───────────────────────────────────────────────────────
+.pytest_cache/
+.cache/
+.tox/
+.nox/
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
+*.py,cover
+nosetests.xml
+.hypothesis/
+junit.xml
+
+# ── Type checkers ────────────────────────────────────────────────────────────
+.mypy_cache/
+.dmypy.json
+.pyre/
+.pytype/
+.pyright/
+.ruff_cache/
+
+# ── IDE / editors ────────────────────────────────────────────────────────────
+.idea/
+.vscode/
+*.code-workspace
+.spyderproject
+.spyproject
+.ropeproject
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ── Jupyter / notebooks ──────────────────────────────────────────────────────
+.ipynb_checkpoints
+*.ipynb
+
+# ── Logs ─────────────────────────────────────────────────────────────────────
+logs/
+*.log
+*.log.*
+
+# ── IVS runtime data — large, generated, machine-local ───────────────────────
+data/snapshots/
+data/production/
+data/llm/
+data/yolo/*.onnx
+data/yolo/*.pt
+data/yolo/*.engine
+data/calibration/
+*.npz
+*.npy
+*.pkl
+*.joblib
+
+# ── IVS exports / Fleet packages (do not commit binary artifacts) ────────────
+*.ivs
+exports/
+imports/
+
+# ── Per-product trained models / calibration (kept local; redistributed via .ivs)
+products/*/models/active/*.onnx
+products/*/models/active/*.pkl
+products/*/models/versions/
+products/*/dataset/
+products/*/calibration/*.pkl
+products/*/calibration/*.npz
+
+# ── Reports (PDF/HTML) ───────────────────────────────────────────────────────
+reports/*.pdf
+reports/*.html
+data/reports/
+
+# ── SQLite / DB ──────────────────────────────────────────────────────────────
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+*.sqlite-wal
+*.sqlite-shm
+storage/migrations/*.bak
+
+# ── Secrets / local config ───────────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+config/local.yaml
+config/secrets.yaml
+config/auth/
+*.pem
+*.key
+*.crt
+
+# ── OS / temp ────────────────────────────────────────────────────────────────
+*.tmp
+*.bak
+*.orig
+nohup.out
+core
+core.*
+
+# ── Claude Code / agent caches (keep them local) ─────────────────────────────
+.claude/
+.anthropic/
+
+# ── Project-specific scratch ─────────────────────────────────────────────────
+scratch/
+tmp/
+TODO.local.md
+NOTES.local.md

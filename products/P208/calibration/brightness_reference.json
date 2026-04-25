@@ -1,0 +1,8 @@
+{
+  "mean": 127.0,
+  "std": 8.0,
+  "min_ok": 108.0,
+  "max_ok": 146.0,
+  "warn_percent": 15.0,
+  "critical_percent": 30.0
+}

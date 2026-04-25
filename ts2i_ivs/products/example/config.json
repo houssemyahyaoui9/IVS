@@ -1,0 +1,43 @@
+{
+  "product_id": "example",
+  "product_name": "Exemple Produit",
+  "product_version": "1.0",
+  "physical_dimensions": {
+    "width_mm": 200.0,
+    "height_mm": 150.0
+  },
+  "logo_definitions": [],
+  "product_barcode": "",
+  "auto_switch_enabled": true,
+  "product_rules": {
+    "criteria": [
+      {
+        "criterion_id": "logo_presence_1",
+        "label": "Pr\u00e9sence Logo 1",
+        "tier": "CRITICAL",
+        "observer_id": "yolo_v8x",
+        "threshold": 0.7,
+        "enabled": false,
+        "mandatory": true
+      },
+      {
+        "criterion_id": "logo_color_1",
+        "label": "Couleur Logo 1",
+        "tier": "MAJOR",
+        "observer_id": "color_de2000",
+        "threshold": 8.0,
+        "enabled": false,
+        "mandatory": true
+      },
+      {
+        "criterion_id": "surface_anomaly",
+        "label": "Texture Surface",
+        "tier": "MINOR",
+        "observer_id": "surface_mini_ensemble",
+        "threshold": 0.3,
+        "enabled": true,
+        "mandatory": false
+      }
+    ]
+  }
+}

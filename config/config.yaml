@@ -1,0 +1,97 @@
+# TS2I IVS v7.0 — Configuration
+# Rule-Governed Hierarchical Inspection System
+# §21 — Configuration v7.0
+
+station_id: STATION-001
+deployment_mode: DEV
+
+camera:
+  type: fake                          # fake | uvc | gige
+  resolution: {width: 1920, height: 1080}
+  fps: 5
+
+pipeline:
+  max_duration_ms: 10000
+  background_timeout_ms: 30000        # timeout background Full-Check
+
+tier_engine:
+  critical_confidence_min: 0.80       # gate buffer CRITICAL
+  major_confidence_min:    0.70       # gate buffer MAJOR
+  minor_confidence_min:    0.60       # gate buffer MINOR
+  review_confidence_threshold: 0.50  # en dessous → REVIEW
+
+observers:
+  yolo:
+    model_path: data/yolo/yolov8x.onnx
+    confidence_threshold: 0.45
+    iou_threshold: 0.45
+    device: cpu                       # cpu | hailo
+  sift:
+    nfeatures: 5000
+    ratio_test: 0.75
+  color:
+    illuminant: D65
+    k_clusters: 5
+  surface:
+    texture_weight:   0.55
+    isoforest_weight: 0.45
+    isoforest_n:      1000
+    seed:             42
+
+learning:
+  trigger_count:        50
+  stability_window:     10
+  drift_threshold:      0.15
+  golden_pass_rate_min: 0.95
+  operator_weight:      2.0
+
+llm:
+  enabled: true
+  timeout_ms: 3000
+  language: fr
+  seed: 42
+  temperature: 0.1
+
+watchdog:
+  enabled: true
+  pipeline_timeout_s: 60
+  max_recoveries:      3
+
+nok_watcher:
+  enabled: true
+  alert_threshold:  5
+  stop_threshold:  10
+
+luminosity:
+  enabled: true
+  warning_percent: 15.0
+  critical_percent: 30.0
+
+system_monitor:
+  enabled: true
+  refresh_s:   5
+  temp_warn:  75
+  temp_crit:  85
+
+scanner:
+  enabled: false
+  interval_ms: 500
+  debounce_s:  3.0
+
+ui:
+  auto_zoom_on_nok: true
+  zoom_nok_level:   4.0
+  snapshot_dir: data/snapshots
+
+web:
+  enabled: false
+  port: 8765
+  auth_required: true
+
+gpio:
+  enabled:   false           # → true sur RPi5
+  backend:   stub            # stub | pi5
+  pin_green: 17              # BCM — Lampe VERTE (OK)
+  pin_red:   18              # BCM — Lampe ROUGE (NOK)
+  pin_start: null            # BCM — INPUT Start inspection (null = désactivé)
+  pin_stop:  null            # BCM — INPUT Stop  inspection (null = désactivé)

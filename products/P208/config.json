@@ -1,0 +1,79 @@
+{
+  "product_id": "P208",
+  "product_name": "Tapis Test v7",
+  "product_version": "1.0",
+  "physical_dimensions": {
+    "width_mm": 300.0,
+    "height_mm": 200.0
+  },
+  "logo_definitions": [
+    {
+      "logo_id": "logo_0",
+      "name": "Logo central",
+      "expected_zone": {
+        "x": 100.0,
+        "y": 60.0,
+        "w": 100.0,
+        "h": 80.0
+      },
+      "class_name": "logo",
+      "tolerance_mm": 5.0
+    }
+  ],
+  "product_barcode": "TAPIS208",
+  "auto_switch_enabled": true,
+  "station_id": "STATION-001",
+  "product_rules": {
+    "criteria": [
+      {
+        "criterion_id": "logo_presence_yolo",
+        "label": "Présence Logo (YOLO)",
+        "tier": "CRITICAL",
+        "observer_id": "yolo_v8x",
+        "threshold": 0.7,
+        "enabled": true,
+        "mandatory": true
+      },
+      {
+        "criterion_id": "logo_alignment_sift",
+        "label": "Alignement Logo (SIFT)",
+        "tier": "CRITICAL",
+        "observer_id": "sift",
+        "threshold": 0.7,
+        "enabled": true,
+        "mandatory": true
+      },
+      {
+        "criterion_id": "logo_color_de2000",
+        "label": "Couleur Logo (ΔE2000)",
+        "tier": "MAJOR",
+        "observer_id": "color_de2000",
+        "threshold": 8.0,
+        "enabled": true,
+        "mandatory": true
+      },
+      {
+        "criterion_id": "dimensions_caliper",
+        "label": "Dimensions (Caliper)",
+        "tier": "MAJOR",
+        "observer_id": "caliper",
+        "threshold": 2.0,
+        "enabled": true,
+        "mandatory": true,
+        "details": {
+          "expected_mm": 100.0,
+          "tolerance_mm": 2.0
+        }
+      },
+      {
+        "criterion_id": "surface_anomaly",
+        "label": "Anomalie Surface (Mini Ensemble)",
+        "tier": "MINOR",
+        "observer_id": "surface_mini_ensemble",
+        "threshold": 0.3,
+        "enabled": true,
+        "mandatory": false
+      }
+    ]
+  }
+}

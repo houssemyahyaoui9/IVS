@@ -1,0 +1,3 @@
+"""
+TierVerdictBadge ×3
+"""
