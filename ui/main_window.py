@@ -101,19 +101,21 @@ class MainWindow(QMainWindow):
         ui_bridge     : Any,
         gpio_manager  : Optional[Any] = None,
         config        : Any           = None,
-        config_path   : str           = "config/config.yaml",
-        fleet_manager : Optional[Any] = None,
-        usb_monitor   : Optional[Any] = None,
-        parent        : Optional[QWidget] = None,
+        config_path    : str           = "config/config.yaml",
+        fleet_manager  : Optional[Any] = None,
+        usb_monitor    : Optional[Any] = None,
+        system_monitor : Optional[Any] = None,
+        parent         : Optional[QWidget] = None,
     ) -> None:
         super().__init__(parent)
-        self._controller    = controller
-        self._bridge        = ui_bridge
-        self._gpio_manager  = gpio_manager
-        self._config        = config
-        self._config_path   = config_path
-        self._fleet_manager = fleet_manager
-        self._usb_monitor   = usb_monitor
+        self._controller     = controller
+        self._bridge         = ui_bridge
+        self._gpio_manager   = gpio_manager
+        self._config         = config
+        self._config_path    = config_path
+        self._fleet_manager  = fleet_manager
+        self._usb_monitor    = usb_monitor
+        self._system_monitor = system_monitor
 
         self.setWindowTitle("TS2I IVS v7.0 — Rule-Governed Hierarchical Inspection")
         self.resize(1440, 900)
@@ -477,6 +479,20 @@ class MainWindow(QMainWindow):
         self.setStatusBar(bar)
         self._sb_state = QLabel("État : —")
         bar.addPermanentWidget(self._sb_state)
+
+        # SystemStatusBar — CPU/RAM/Temp/Disk/Uptime alimenté via UIBridge.system_health_update
+        try:
+            from ui.components.system_status_bar import SystemStatusBar
+            self._sb_health = SystemStatusBar(monitor=self._system_monitor, parent=self)
+            bar.addPermanentWidget(self._sb_health)
+            if self._bridge is not None and hasattr(self._bridge, "system_health_update"):
+                self._bridge.system_health_update.connect(
+                    self._sb_health.on_health_update,
+                )
+        except Exception as exc:
+            logger.warning("SystemStatusBar indisponible : %s", exc)
+            self._sb_health = None
+
         bar.showMessage("Prêt", 2000)
 
     # ── Actions menu / toolbar ────────────────────────────────────────────────

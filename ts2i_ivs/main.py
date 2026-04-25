@@ -15,6 +15,31 @@ import argparse
 import logging
 import os
 import sys
+from pathlib import Path
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  sys.path bootstrap : la version canonique des modules vit à la racine du
+#  projet (ui/main_window.py = celle avec 7 onglets). Le dossier ts2i_ivs/
+#  contient un miroir partiel hérité — on le contourne ici.
+#
+#  Important : Python ajoute automatiquement la directory du script (ts2i_ivs/)
+#  en sys.path[0]. Sans cette purge, `import core` / `import ui` chargeraient
+#  les stubs internes au lieu des modules canoniques racine. On retire donc
+#  l'entrée et on force la racine projet en tête.
+# ─────────────────────────────────────────────────────────────────────────────
+
+_THIS_DIR     = Path(__file__).resolve().parent
+_PROJECT_ROOT = _THIS_DIR.parent
+
+# 1) Retire le miroir interne du chemin (ts2i_ivs/ contient des stubs vides
+#    qui supplantent monitoring/, ui/, core/ de la racine).
+sys.path[:] = [p for p in sys.path if Path(p).resolve() != _THIS_DIR]
+
+# 2) Force la racine projet en sys.path[0] — même si déjà présente via
+#    PYTHONPATH=. (pour garantir l'ordre de résolution).
+if str(_PROJECT_ROOT) in sys.path:
+    sys.path.remove(str(_PROJECT_ROOT))
+sys.path.insert(0, str(_PROJECT_ROOT))
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -140,24 +165,40 @@ def check_systems() -> int:
 # ─────────────────────────────────────────────────────────────────────────────
 
 def run_gui(args: argparse.Namespace) -> int:
-    """Lance QApplication → UIBridge → SystemController → MainWindow → exec."""
+    """Lance QApplication → UIBridge → SystemController → SystemMonitor → MainWindow."""
     from PyQt6.QtWidgets import QApplication
-    from ts2i_ivs.core.ui_bridge import UIBridge
-    from ts2i_ivs.ui.main_window import MainWindow
 
-    # SystemController est disponible dès que ts2i_ivs.core.pipeline_controller
-    # est rempli. S'il manque, on dégrade : MainWindow accepte controller=None
-    # (les boutons start/stop seront inactifs, mais l'UI s'ouvre).
+    # Modules canoniques (racine projet — pas le miroir ts2i_ivs/)
+    from core.ui_bridge import UIBridge
+    from ui.main_window import MainWindow
+
     try:
-        from ts2i_ivs.core.pipeline_controller import SystemController
+        from core.pipeline_controller import SystemController
     except Exception as e:
         logging.warning("SystemController indisponible (%s) — mode preview", e)
         SystemController = None  # type: ignore[assignment]
+
+    try:
+        from monitoring.system_monitor import SystemMonitor
+    except Exception as e:
+        logging.warning("SystemMonitor indisponible (%s) — status bar inactive", e)
+        SystemMonitor = None  # type: ignore[assignment]
 
     app = QApplication.instance() or QApplication(sys.argv)
 
     bridge = UIBridge()
     controller = SystemController(bridge) if SystemController is not None else None
+
+    # SystemMonitor : thread daemon CPU/RAM/Temp/Disk → UIBridge.system_health_update
+    monitor = None
+    if SystemMonitor is not None:
+        try:
+            monitor = SystemMonitor(ui_bridge=bridge)
+            monitor.start()
+            logging.info("SystemMonitor démarré (refresh 5s)")
+        except Exception as e:
+            logging.warning("SystemMonitor.start() échoué : %s", e)
+            monitor = None
 
     # Bootstrap produit CLI (--product P208) : active + amène la FSM à IDLE_READY
     # AVANT que l'UI s'affiche (sinon le bouton Démarrer reste désactivé).
@@ -165,15 +206,22 @@ def run_gui(args: argparse.Namespace) -> int:
         _bootstrap_product(controller, args.product)
 
     window = MainWindow(
-        ui_bridge         = bridge,
-        system_controller = controller,
-        product_id        = args.product,
-        snapshot_dir      = args.snapshot_dir,
+        controller     = controller,
+        ui_bridge      = bridge,
+        config         = None,
+        config_path    = "config/config.yaml",
+        system_monitor = monitor,
     )
     window.show()
 
     logging.info("MainWindow affichée — entrée dans la boucle Qt")
-    return app.exec()
+    rc = app.exec()
+    if monitor is not None:
+        try:
+            monitor.stop()
+        except Exception:
+            pass
+    return rc
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -198,7 +246,7 @@ def _bootstrap_product(controller, product_id: str) -> bool:
     Retourne True si IDLE_READY atteint, False sinon (état partiel loggé).
     """
     from pathlib import Path
-    from ts2i_ivs.core.models import SystemState
+    from core.models import SystemState
 
     product_dir = Path("products") / product_id
     config_path = product_dir / "config.json"
