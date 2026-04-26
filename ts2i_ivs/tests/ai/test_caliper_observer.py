@@ -1,3 +1,0 @@
-"""
-CaliperObserver — G-11
-"""

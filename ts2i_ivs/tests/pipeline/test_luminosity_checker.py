@@ -1,3 +1,0 @@
-"""
-LuminosityChecker — G-28
-"""

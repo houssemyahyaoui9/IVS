@@ -1,3 +1,0 @@
-"""
-LuminosityChecker — §42
-"""

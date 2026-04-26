@@ -1,3 +1,0 @@
-"""
-ModelBuilder — G-07
-"""

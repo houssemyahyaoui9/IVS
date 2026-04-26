@@ -1,3 +1,0 @@
-"""
-GPIO Dashboard — §17
-"""

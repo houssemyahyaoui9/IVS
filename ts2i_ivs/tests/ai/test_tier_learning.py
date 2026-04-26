@@ -1,3 +1,0 @@
-"""
-TierLearning — G-16
-"""

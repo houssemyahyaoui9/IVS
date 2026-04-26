@@ -1,3 +1,0 @@
-"""
-MemorySystem best/worst/edge
-"""

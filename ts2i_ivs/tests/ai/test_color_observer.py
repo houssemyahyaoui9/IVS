@@ -1,3 +1,0 @@
-"""
-ColorObserver — G-09
-"""

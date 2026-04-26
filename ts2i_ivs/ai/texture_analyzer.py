@@ -1,3 +1,0 @@
-"""
-TextureAnalyzer GLCM+LBP+FFT
-"""

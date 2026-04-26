@@ -1,3 +1,0 @@
-"""
-OcrObserver — G-14
-"""

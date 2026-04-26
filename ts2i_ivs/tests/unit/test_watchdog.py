@@ -1,3 +1,0 @@
-"""
-WatchdogManager — G-26
-"""

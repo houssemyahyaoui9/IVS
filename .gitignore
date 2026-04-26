@@ -146,3 +146,12 @@ scratch/
 tmp/
 TODO.local.md
 NOTES.local.md
+ts2i_ivs/
+
+# Backups & temp
+*.tar.gz
+*.Zone.Identifier
+*:Zone.Identifier
+
+# v9 specs
+IVS_SESSIONS_v8.md

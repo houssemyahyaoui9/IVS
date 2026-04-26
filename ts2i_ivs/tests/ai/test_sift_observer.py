@@ -1,3 +1,0 @@
-"""
-SiftObserver — G-06
-"""

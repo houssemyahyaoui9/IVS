@@ -1,3 +1,0 @@
-"""
-YoloObserver — G-08
-"""

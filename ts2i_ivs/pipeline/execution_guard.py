@@ -1,3 +1,0 @@
-"""
-ExecutionGuard GR-11
-"""

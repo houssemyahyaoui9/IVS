@@ -1,3 +1,0 @@
-"""
-ConsecutiveNOKWatcher — §41
-"""

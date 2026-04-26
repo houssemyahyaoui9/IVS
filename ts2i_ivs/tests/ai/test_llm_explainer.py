@@ -1,3 +1,0 @@
-"""
-LLMExplainer — G-15
-"""

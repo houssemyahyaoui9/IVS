@@ -1,3 +1,0 @@
-"""
-FeatureExtractor — G-05
-"""

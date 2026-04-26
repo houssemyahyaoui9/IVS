@@ -1,3 +1,0 @@
-"""
-Analytics + tier_scores
-"""

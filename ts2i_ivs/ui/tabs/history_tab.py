@@ -1,3 +1,0 @@
-"""
-Historique inspections
-"""

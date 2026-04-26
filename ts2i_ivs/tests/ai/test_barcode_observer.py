@@ -1,3 +1,0 @@
-"""
-BarcodeObserver — G-14
-"""

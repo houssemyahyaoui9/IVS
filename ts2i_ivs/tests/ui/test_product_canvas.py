@@ -1,3 +1,0 @@
-"""
-ProductCanvas — G-25
-"""

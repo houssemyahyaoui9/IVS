@@ -1,3 +1,0 @@
-"""
-Calibration — G-04
-"""

@@ -1,0 +1,66 @@
+{
+  "product_id": "H",
+  "product_name": "hh",
+  "product_version": "1.0",
+  "product_barcode": "",
+  "physical_dimensions": {
+    "width_mm": 300.0,
+    "height_mm": 200.0
+  },
+  "logo_definitions": [
+    {
+      "logo_id": "logo_0",
+      "name": "Logo 1",
+      "class_name": "logo",
+      "tolerance_mm": 5.0,
+      "expected_zone": {
+        "x": 100.0,
+        "y": 60.0,
+        "w": 100.0,
+        "h": 80.0
+      }
+    }
+  ],
+  "auto_switch_enabled": false,
+  "station_id": "STATION-001",
+  "product_rules": {
+    "criteria": [
+      {
+        "criterion_id": "yolo_v8x_0",
+        "label": "Présence Logo 1",
+        "tier": "CRITICAL",
+        "observer_id": "yolo_v8x",
+        "threshold": 0.0,
+        "mandatory": true,
+        "enabled": true
+      },
+      {
+        "criterion_id": "color_de2000_1",
+        "label": "Couleur Logo 1",
+        "tier": "MAJOR",
+        "observer_id": "color_de2000",
+        "threshold": 8.0,
+        "mandatory": true,
+        "enabled": true
+      },
+      {
+        "criterion_id": "sift_2",
+        "label": "Position Logo 1",
+        "tier": "MAJOR",
+        "observer_id": "sift",
+        "threshold": 5.0,
+        "mandatory": true,
+        "enabled": true
+      },
+      {
+        "criterion_id": "surface_mini_ensemble_5",
+        "label": "Texture surface",
+        "tier": "MINOR",
+        "observer_id": "surface_mini_ensemble",
+        "threshold": 0.3,
+        "mandatory": false,
+        "enabled": true
+      }
+    ]
+  }
+}

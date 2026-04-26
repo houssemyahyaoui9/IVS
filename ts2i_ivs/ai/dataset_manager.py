@@ -1,3 +1,0 @@
-"""
-DatasetManager per-Tier versioning
-"""

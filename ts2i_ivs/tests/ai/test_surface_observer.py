@@ -1,3 +1,0 @@
-"""
-SurfaceObserver — G-10
-"""

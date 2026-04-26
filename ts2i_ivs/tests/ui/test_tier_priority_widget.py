@@ -1,3 +1,0 @@
-"""
-TierPriorityWidget — G-21
-"""

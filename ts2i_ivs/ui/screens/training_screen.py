@@ -1,3 +1,0 @@
-"""
-Entraînement per-Tier
-"""

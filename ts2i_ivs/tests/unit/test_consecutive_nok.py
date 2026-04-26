@@ -1,3 +1,0 @@
-"""
-ConsecutiveNOK — G-27
-"""

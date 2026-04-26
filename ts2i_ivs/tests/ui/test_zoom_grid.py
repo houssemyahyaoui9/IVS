@@ -1,3 +1,0 @@
-"""
-ZoomableGridView — G-23
-"""

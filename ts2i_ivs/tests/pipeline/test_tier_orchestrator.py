@@ -1,3 +1,0 @@
-"""
-TierOrchestrator — G-13
-"""

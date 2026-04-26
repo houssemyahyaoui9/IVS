@@ -17,6 +17,7 @@ from PyQt6.QtWidgets import (
     QGroupBox,
     QHBoxLayout,
     QLabel,
+    QPushButton,
     QSizePolicy,
     QSplitter,
     QVBoxLayout,
@@ -80,6 +81,80 @@ class _ActiveProductBar(QFrame):
         self._state_label.setText(f"État : {state_value}")
 
 
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  ControlBar — Start / Stop
+# ─────────────────────────────────────────────────────────────────────────────
+
+class _ControlBar(QFrame):
+    """Barre de contrôle Start/Stop — GR-03 : passe par SystemController."""
+
+    def __init__(self, controller: "SystemController", parent=None) -> None:
+        super().__init__(parent)
+        self._controller = controller
+        self.setObjectName("ControlBar")
+        self.setFrameShape(QFrame.Shape.StyledPanel)
+        self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+
+        layout = QHBoxLayout(self)
+        layout.setContentsMargins(12, 8, 12, 8)
+        layout.setSpacing(12)
+
+        self._btn_start = QPushButton("▶  Démarrer")
+        self._btn_start.setObjectName("BtnStart")
+        self._btn_start.setFixedHeight(40)
+        self._btn_start.setStyleSheet(
+            "QPushButton { background-color: #2ECC71; color: white; "
+            "font-weight: bold; font-size: 14px; border-radius: 6px; }"
+            "QPushButton:hover { background-color: #27AE60; }"
+            "QPushButton:disabled { background-color: #95A5A6; }"
+        )
+
+        self._btn_stop = QPushButton("■  Arrêter")
+        self._btn_stop.setObjectName("BtnStop")
+        self._btn_stop.setFixedHeight(40)
+        self._btn_stop.setEnabled(False)
+        self._btn_stop.setStyleSheet(
+            "QPushButton { background-color: #E74C3C; color: white; "
+            "font-weight: bold; font-size: 14px; border-radius: 6px; }"
+            "QPushButton:hover { background-color: #C0392B; }"
+            "QPushButton:disabled { background-color: #95A5A6; }"
+        )
+
+        self._status_label = QLabel("En attente d'un produit…")
+        self._status_label.setObjectName("StatusLabel")
+
+        layout.addWidget(self._btn_start)
+        layout.addWidget(self._btn_stop)
+        layout.addStretch(1)
+        layout.addWidget(self._status_label)
+
+        self._btn_start.clicked.connect(self._on_start)
+        self._btn_stop.clicked.connect(self._on_stop)
+
+    def _on_start(self) -> None:
+        try:
+            self._controller.start_inspection()
+            logger.info("UI: start_inspection()")
+        except Exception as e:
+            logger.error("start_inspection() échoué : %s", e)
+
+    def _on_stop(self) -> None:
+        try:
+            self._controller.stop_inspection()
+            logger.info("UI: stop_inspection()")
+        except Exception as e:
+            logger.error("stop_inspection() échoué : %s", e)
+
+    def on_state_changed(self, state_value: str) -> None:
+        """Met à jour l'état des boutons selon la FSM."""
+        running = state_value == "RUNNING"
+        ready   = state_value == "IDLE_READY"
+        self._btn_start.setEnabled(ready)
+        self._btn_stop.setEnabled(running)
+        self._status_label.setText(f"État : {state_value}")
+
 # ─────────────────────────────────────────────────────────────────────────────
 #  InspectionScreen
 # ─────────────────────────────────────────────────────────────────────────────
@@ -108,6 +183,9 @@ class InspectionScreen(QWidget):
 
         self._topbar = _ActiveProductBar(self)
         root.addWidget(self._topbar)
+
+        self._controlbar = _ControlBar(self._controller, self)
+        root.addWidget(self._controlbar)
 
         # 3 grilles — Référence (statique) · Brute (live S1) · Corrigée (post-S3).
         # Splitter horizontal pour permettre à l'opérateur de redimensionner.
@@ -163,6 +241,7 @@ class InspectionScreen(QWidget):
         self._bridge.product_switched.connect(self._topbar.on_product_switched)
         self._bridge.auto_switch_started.connect(self._topbar.on_auto_switch_started)
         self._bridge.state_changed.connect(self._topbar.on_state_changed)
+        self._bridge.state_changed.connect(self._controlbar.on_state_changed)
         # Live grid : alimentée par PipelineRunner.S1_Acquisition → UIBridge.frame_ready
         # GR-05 : connexion auto QueuedConnection si émis depuis le thread pipeline.
         if hasattr(self._bridge, "frame_ready"):
@@ -173,3 +252,4 @@ class InspectionScreen(QWidget):
         if active:
             self._topbar.on_product_switched(active)
         self._topbar.on_state_changed(self._controller.get_state().value)
+        self._controlbar.on_state_changed(self._controller.get_state().value)
