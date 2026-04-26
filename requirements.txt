@@ -119,9 +119,8 @@ ruff==0.15.12
 # Color science (Delta E, illuminants D50/D65) — observer color avancé
 # colormath>=3.0.0
 #
-# Auth bcrypt hashing (server) — required when core/auth.py is wired
-# passlib[bcrypt]>=1.7.4
-# bcrypt>=4.1.2
+# Auth bcrypt hashing (server) — required by core/operators (S26-v9, GR-V9-7)
+bcrypt==4.2.0
 #
 # Raspberry Pi 5 GPIO backend (pip install on the Pi only)
 # RPi.GPIO>=0.7.1 ; platform_machine == "aarch64"

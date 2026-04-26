@@ -79,6 +79,7 @@ scanner:
   debounce_s:  3.0
 
 ui:
+  theme: light                        # light | dark — S25-v9 (GR-V9-2)
   auto_zoom_on_nok: true
   zoom_nok_level:   4.0
   snapshot_dir: data/snapshots

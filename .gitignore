@@ -134,8 +134,8 @@ config/auth/
 *.bak
 *.orig
 nohup.out
-core
 core.*
+# (règle "core" supprimée — ignorait à tort le dossier projet core/)
 
 # ── Claude Code / agent caches (keep them local) ─────────────────────────────
 .claude/

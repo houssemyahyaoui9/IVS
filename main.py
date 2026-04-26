@@ -64,11 +64,13 @@ def run_gui(args) -> int:
     from core.ui_bridge import UIBridge
     from ui.main_window import MainWindow
 
+    # ── STEP 1 : Config ──
+    cfg_for_theme = None
     controller = None
     try:
         from core.pipeline_controller import SystemController
         from core.config_manager import ConfigManager
-        config = ConfigManager("config/config.yaml")
+        cfg_for_theme = ConfigManager("config/config.yaml").load()
         bridge = UIBridge()
         controller = SystemController(bridge)
     except Exception as e:
@@ -84,6 +86,18 @@ def run_gui(args) -> int:
         logging.warning("SystemMonitor indisponible : %s", e)
 
     app = QApplication.instance() or QApplication(sys.argv)
+
+    # ── STEP 2 : Theme AVANT toute fenêtre (GR-V9-2) ──
+    try:
+        from ui.theme.theme_manager import ThemeManager
+        theme_name = "light"
+        if cfg_for_theme is not None:
+            theme_name = cfg_for_theme.get("ui.theme", "light") or "light"
+        ThemeManager.instance().apply(theme_name)
+    except Exception as e:
+        logging.warning("ThemeManager non appliqué : %s", e)
+
+    # ── STEP 3 : MainWindow ──
     window = MainWindow(
         controller=controller,
         ui_bridge=bridge,

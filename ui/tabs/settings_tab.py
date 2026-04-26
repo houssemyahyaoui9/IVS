@@ -139,7 +139,7 @@ class SettingsTab(QWidget):
         root.addWidget(self._lock_banner)
 
         self._sections = QTabWidget(self)
-        self._sections.setTabPosition(QTabWidget.TabPosition.West)
+        self._sections.setTabPosition(QTabWidget.TabPosition.North)  # GR-V9-8
         root.addWidget(self._sections, 1)
 
         self._build_camera_section()

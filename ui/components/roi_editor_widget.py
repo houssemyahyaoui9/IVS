@@ -21,7 +21,7 @@ from core.tier_result import TierLevel
 #  RoiZone
 # ─────────────────────────────────────────────────────────────────────────────
 
-@dataclass
+@dataclass(frozen=True)
 class RoiZone:
     """
     Zone d'inspection définie par l'utilisateur — §12.2.
@@ -37,6 +37,39 @@ class RoiZone:
     mandatory : bool
     details   : dict = field(default_factory=dict)
 
+    def to_criterion_rules(self) -> list["CriterionRule"]:
+        """
+        Convertit cette zone en liste CriterionRule.
+        Appelé depuis les tests et depuis RoiEditorWidget.
+        """
+        from core.models import CriterionRule
+        observer_map = {
+            "ocr"    : "ocr_tesseract",
+            "caliper": "caliper_measure",
+            "color"  : "color_de2000",
+            "roi"    : "surface_mini_ensemble",
+        }
+        observer_id = observer_map.get(self.zone_type,
+                                       "surface_mini_ensemble")
+        return [CriterionRule(
+            criterion_id = self.zone_id,
+            label        = self.label,
+            tier         = self.tier,
+            observer_id  = observer_id,
+            threshold    = self.threshold,
+            enabled      = True,
+            mandatory    = self.mandatory,
+            details      = {
+                "bbox_rel": {
+                    "x": self.bbox_rel.x,
+                    "y": self.bbox_rel.y,
+                    "w": self.bbox_rel.w,
+                    "h": self.bbox_rel.h,
+                },
+                **self.details,
+            },
+        )]
+
     @staticmethod
     def make(
         zone_type : str,
@@ -49,12 +82,13 @@ class RoiZone:
     ) -> "RoiZone":
         """Factory avec ID auto-généré."""
         # Tier fixé selon le type
+        from core.tier_result import TierLevel as _TL
         fixed = {
-            "ocr":     TierLevel.MINOR,
-            "caliper": TierLevel.MAJOR,
-            "color":   TierLevel.MAJOR,
+            "ocr":     _TL.MINOR,
+            "caliper": _TL.MAJOR,
+            "color":   _TL.MAJOR,
         }
-        effective_tier = fixed.get(zone_type, tier)
+        effective_tier = fixed.get(zone_type, tier if tier is not None else _TL.MINOR)
         zone_id        = f"{zone_type}_{uuid.uuid4().hex[:8]}"
         return RoiZone(
             zone_id   = zone_id,
@@ -131,10 +165,14 @@ class RoiEditorWidget(QWidget):
         parent:      QWidget | None = None,
         max_zones:   int = 20,
         min_size_px: int = 10,
+        canvas_size: tuple[int,int] | None = None,
     ) -> None:
         super().__init__(parent)
+        self._canvas_w = canvas_size[0] if canvas_size else None
+        self._canvas_h = canvas_size[1] if canvas_size else None
         self._pixmap:        Optional[QPixmap] = None
         self._zones:         list[RoiZone]     = []
+        self._selected_zone_id: str | None = None
         self._selected_idx:  Optional[int]     = None
         self._draw_mode:     bool              = True   # True=draw · False=select
         self._current_type:  str               = "roi"
@@ -201,8 +239,20 @@ class RoiEditorWidget(QWidget):
         self.update()
 
     def delete_selected(self) -> None:
-        """Supprime la zone sélectionnée."""
-        if self._selected_idx is None or not self._editable:
+        """Supprime la zone sélectionnée (_selected_idx ou _selected_zone_id)."""
+        if not self._editable:
+            return
+        # Support _selected_zone_id (API tests)
+        if self._selected_zone_id is not None:
+            self._zones = [z for z in self._zones
+                           if z.zone_id != self._selected_zone_id]
+            self._selected_zone_id = None
+            self._selected_idx = None
+            self.zones_changed.emit()
+            self.update()
+            return
+        # Support _selected_idx (API interne)
+        if self._selected_idx is None:
             return
         self._zones.pop(self._selected_idx)
         self._selected_idx = None
@@ -261,7 +311,81 @@ class RoiEditorWidget(QWidget):
             ))
         return rules
 
-    # ── Événements souris ────────────────────────────────────────────────────
+    # ── API publique ─────────────────────────────────────────────────────────
+    def add_zone(self,
+                 zone_type: str,
+                 bbox_rel: "BoundingBox",
+                 tier: "TierLevel" = None,
+                 label: str = "",
+                 threshold: float = 0.80,
+                 mandatory: bool = False) -> RoiZone:
+        """
+        Ajoute une zone programmatiquement.
+        Lève ValueError si max_zones atteint.
+        Lève ValueError si bbox trop petite (< min_size_px).
+        Bloqué si not self._editable (GR-12).
+        """
+        if not self._editable:
+            raise PermissionError("Widget non éditable (GR-12 — RUNNING)")
+        if len(self._zones) >= self._max_zones:
+            raise ValueError(
+                f"Max zones atteint : {self._max_zones}")
+        # Vérifier taille minimale en pixels
+        _cw = self._canvas_w if hasattr(self, '_canvas_w') and self._canvas_w else (self.width() or 800)
+        _ch = self._canvas_h if hasattr(self, '_canvas_h') and self._canvas_h else (self.height() or 600)
+        w_px = int(bbox_rel.w * _cw)
+        h_px = int(bbox_rel.h * _ch)
+        if w_px < self._min_size_px or h_px < self._min_size_px:
+            raise ValueError(
+                f"Zone trop petite : {w_px}×{h_px}px "
+                f"(min {self._min_size_px}px)")
+        from core.tier_result import TierLevel as TL
+        effective_tier = tier if tier is not None else TL.MINOR
+        zone = RoiZone.make(
+            zone_type = zone_type,
+            bbox_rel  = bbox_rel,
+            tier      = effective_tier,
+            label     = label,
+            threshold = threshold,
+            mandatory = mandatory,
+        )
+        self._zones.append(zone)
+        self.update()
+        return zone
+
+    def get_tier_color(self, tier: "TierLevel") -> "QColor":
+        """Retourne la couleur QColor associée au Tier."""
+        name = tier.value if hasattr(tier, 'value') else str(tier)
+        mapping = {
+            'CRITICAL' : QColor(0xFF, 0x44, 0x44, 200),
+            'MAJOR'    : QColor(0xFF, 0x88, 0x00, 200),
+            'MINOR'    : QColor(0xFF, 0xCC, 0x00, 200),
+        }
+        return mapping.get(name, QColor(128, 128, 128, 200))
+
+    def get_zone_type_color(self, zone_type: str) -> "QColor":
+        """Retourne la couleur selon le type de zone."""
+        mapping = {
+            'ocr'    : QColor(0x44, 0xCC, 0x44, 200),
+            'caliper': QColor(0x99, 0x44, 0xFF, 200),
+            'color'  : QColor(0xFF, 0x44, 0xFF, 200),
+            'roi'    : QColor(0xFF, 0x44, 0x44, 200),
+        }
+        return mapping.get(zone_type, QColor(128, 128, 128, 200))
+
+    def get_all_criterion_rules(self) -> list:
+        """Alias de to_criterion_rules() pour compatibilité tests."""
+        return self.to_criterion_rules()
+
+    def set_editable(self, editable: bool) -> None:
+        """Active ou désactive l'édition (GR-12)."""
+        self._editable = editable
+        if not editable:
+            self.setCursor(Qt.CursorShape.ForbiddenCursor)
+        else:
+            self.setCursor(Qt.CursorShape.CrossCursor)
+
+        # ── Événements souris ────────────────────────────────────────────────────
 
     def mousePressEvent(self, event) -> None:
         if not self._editable:
