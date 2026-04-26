@@ -1,68 +1,119 @@
 """
-main — TS2I IVS v7.0
-CLI entry point — Rule-Governed Hierarchical Inspection System
+main — TS2I IVS v7.0 (entry point racine)
+Délègue à core/pipeline_controller + ui/main_window
 """
+from __future__ import annotations
 import argparse
-import sys
+import logging
 import os
+import sys
+from pathlib import Path
+
+# Force racine projet dans sys.path
+_ROOT = Path(__file__).resolve().parent
+if str(_ROOT) not in sys.path:
+    sys.path.insert(0, str(_ROOT))
 
 
 def parse_args():
     p = argparse.ArgumentParser(description="TS2I IVS v7.0")
     p.add_argument("--mode", choices=["gui", "headless"], default="gui")
-    p.add_argument("--check", action="store_true", help="Run system checks and exit")
+    p.add_argument("--check", action="store_true")
     p.add_argument("--debug", action="store_true")
-    p.add_argument("--inspections", type=int, default=0)
+    p.add_argument("--product", type=str, default="")
     return p.parse_args()
 
 
 def check_systems() -> int:
     print("TS2I IVS v7.0 — System Check")
     print("═══════════════════════════════")
-
     checks = [
-        ("Python 3.11+",   lambda: sys.version_info >= (3, 11)),
-        ("OpenCV",         lambda: __import__("cv2") and True),
-        ("ONNX Runtime",   lambda: __import__("onnxruntime") and True),
-        ("scikit-learn",   lambda: __import__("sklearn") and True),
-        ("PyQt6",          lambda: __import__("PyQt6") and True),
-        ("FastAPI",        lambda: __import__("fastapi") and True),
-        ("Config file",    lambda: os.path.exists("config/config.yaml")),
+        ("Python 3.11+",           lambda: sys.version_info >= (3, 11)),
+        ("OpenCV",                 lambda: __import__("cv2") and True),
+        ("NumPy",                  lambda: __import__("numpy") and True),
+        ("ONNX Runtime",           lambda: __import__("onnxruntime") and True),
+        ("scikit-learn",           lambda: __import__("sklearn") and True),
+        ("PyQt6",                  lambda: __import__("PyQt6") and True),
+        ("FastAPI",                lambda: __import__("fastapi") and True),
+        ("psutil",                 lambda: __import__("psutil") and True),
+        ("PyYAML",                 lambda: __import__("yaml") and True),
+        ("Config file",            lambda: os.path.exists("config/config.yaml")),
         ("data/production/OK",     lambda: os.path.isdir("data/production/OK")),
         ("data/production/NOK",    lambda: os.path.isdir("data/production/NOK")),
         ("data/production/REVIEW", lambda: os.path.isdir("data/production/REVIEW")),
-        ("data/snapshots", lambda: os.path.isdir("data/snapshots")),
-        ("data/yolo",      lambda: os.path.isdir("data/yolo")),
-        ("data/llm",       lambda: os.path.isdir("data/llm")),
+        ("data/snapshots",         lambda: os.path.isdir("data/snapshots")),
+        ("data/yolo",              lambda: os.path.isdir("data/yolo")),
+        ("data/llm",               lambda: os.path.isdir("data/llm")),
     ]
-
     all_ok = True
     for name, fn in checks:
         try:
             ok = fn()
-            print(f"  {'✅' if ok else '❌'} {name}")
-            if not ok:
-                all_ok = False
         except Exception as e:
-            print(f"  ❌ {name}: {e}")
+            ok = False
+        print(f"  {'✅' if ok else '❌'} {name}")
+        if not ok:
             all_ok = False
-
     print("═══════════════════════════════")
-    if all_ok:
-        print("✅ ALL SYSTEMS GO")
-    else:
-        print("❌ Some checks failed")
+    print("✅ ALL SYSTEMS GO" if all_ok else "❌ Some checks failed")
     return 0 if all_ok else 1
+
+
+def run_gui(args) -> int:
+    from PyQt6.QtWidgets import QApplication
+    from core.ui_bridge import UIBridge
+    from ui.main_window import MainWindow
+
+    controller = None
+    try:
+        from core.pipeline_controller import SystemController
+        from core.config_manager import ConfigManager
+        config = ConfigManager("config/config.yaml")
+        bridge = UIBridge()
+        controller = SystemController(bridge)
+    except Exception as e:
+        logging.warning("SystemController indisponible : %s", e)
+        bridge = UIBridge()
+
+    monitor = None
+    try:
+        from monitoring.system_monitor import SystemMonitor
+        monitor = SystemMonitor(ui_bridge=bridge)
+        monitor.start()
+    except Exception as e:
+        logging.warning("SystemMonitor indisponible : %s", e)
+
+    app = QApplication.instance() or QApplication(sys.argv)
+    window = MainWindow(
+        controller=controller,
+        ui_bridge=bridge,
+        config=None,
+        config_path="config/config.yaml",
+        system_monitor=monitor,
+    )
+    window.show()
+    rc = app.exec()
+    if monitor:
+        try:
+            monitor.stop()
+        except Exception:
+            pass
+    return rc
 
 
 def main():
     args = parse_args()
-
+    logging.basicConfig(
+        level=logging.DEBUG if args.debug else logging.INFO,
+        format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+        datefmt="%H:%M:%S",
+    )
     if args.check:
         sys.exit(check_systems())
-
-    print("TS2I IVS v7.0 — Rule-Governed Hierarchical Inspection")
-    print("Run Sessions S00-A → S24-B to implement")
+    if args.mode == "headless":
+        print("Mode headless — à implémenter")
+        sys.exit(0)
+    sys.exit(run_gui(args))
 
 
 if __name__ == "__main__":
