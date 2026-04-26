@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>TS2I IVS v9.0 — Themes</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  background: #444;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+.theme-label {
+  font-size: 13px; font-weight: 800; letter-spacing: 3px;
+  text-transform: uppercase; margin-bottom: 10px; color: #fff;
+}
+
+/* ══════════════════════════════════
+   IVS SHELL
+══════════════════════════════════ */
+.ivs {
+  border-radius: 8px; overflow: hidden;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.5);
+  display: flex; flex-direction: column;
+  font-size: 13px; width: 1100px;
+}
+
+/* NAVBAR */
+.navbar {
+  display: flex; align-items: stretch;
+  padding: 0 16px; height: 44px; border-bottom: 2px solid;
+}
+.nav-tab {
+  padding: 0 18px; font-size: 13px; font-weight: 600;
+  border-bottom: 3px solid transparent; margin-bottom: -2px;
+  display: flex; align-items: center; gap: 6px; cursor: pointer;
+}
+.spacer { flex: 1; }
+.insp-tab {
+  display: flex; align-items: center; gap: 6px;
+  padding: 0 16px; font-size: 13px; font-weight: 800; cursor: pointer;
+  border-bottom: 3px solid transparent; margin-bottom: -2px;
+}
+.kbd-tag { font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 3px; }
+
+/* CTRL BAR */
+.ctrl-bar {
+  padding: 7px 16px; display: flex; gap: 9px;
+  align-items: center; border-bottom: 1px solid;
+}
+.btn { padding: 6px 16px; border-radius: 5px; font-size: 13px; font-weight: 700; cursor: pointer; border: none; font-family: inherit; }
+.btn-start { background: #16a34a; color: #fff; }
+.btn-stop  { background: #dc2626; color: #fff; }
+.btn-sm    { cursor: pointer; border-radius: 4px; padding: 5px 11px; font-size: 12px; font-family: inherit; }
+.btn-act   { cursor: pointer; border-radius: 4px; padding: 5px 11px; font-size: 12px; font-weight: 700; font-family: inherit; border: 2px solid; }
+.sep       { width: 1px; height: 20px; }
+
+/* BODY */
+.body-wrap { display: flex; height: 420px; overflow: hidden; }
+
+/* TELEMETRY */
+.tel-panel {
+  width: 200px; padding: 10px; display: flex;
+  flex-direction: column; gap: 0; flex-shrink: 0;
+  border-right: 1px solid; overflow-y: auto;
+}
+
+/* DRAGGABLE SECTION */
+.tel-sec {
+  border: 1px solid; border-radius: 6px; margin-bottom: 8px;
+  cursor: grab; user-select: none;
+  transition: box-shadow 0.15s, opacity 0.15s;
+}
+.tel-sec:active { cursor: grabbing; }
+.tel-sec.dragging { opacity: 0.4; box-shadow: 0 4px 16px rgba(0,0,0,0.3); }
+.tel-sec.drag-over { border-style: dashed; border-width: 2px; }
+
+.tel-drag-handle {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 9px 4px; border-bottom: 1px solid;
+  border-radius: 5px 5px 0 0; cursor: grab;
+}
+.drag-dots { font-size: 11px; letter-spacing: -2px; opacity: 0.4; }
+.tel-title { font-size: 10px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; }
+.tel-body  { padding: 7px 10px; }
+
+.tel-row { font-size: 12px; display: flex; justify-content: space-between; margin-bottom: 4px; }
+.tel-row span:first-child { font-weight: 500; }
+.tel-row span:last-child  { font-weight: 700; }
+
+/* GAUGE */
+.gauge-wrap { margin: 3px 0 2px; }
+.gauge-bar  { width: 100%; height: 6px; border-radius: 3px; overflow: hidden; }
+.gauge-fill { height: 100%; border-radius: 3px; }
+.g-ok   { background: #16a34a; }
+.g-warn { background: #ea580c; }
+
+.ref-row  { display: flex; justify-content: space-between; align-items: center; font-size: 11px; margin-top: 5px; }
+.ref-val  { font-weight: 700; font-size: 12px; }
+.ref-hint { font-size: 10px; margin: 1px 0 3px; }
+.d-ok   { font-size: 11px; font-weight: 700; color: #16a34a; }
+.d-warn { font-size: 11px; font-weight: 700; color: #ea580c; }
+
+/* OBSERVER TOOLS */
+.obs-row {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 12px; padding: 4px 0;
+  border-bottom: 1px solid;
+}
+.obs-row:last-child { border-bottom: none; }
+.obs-dot { font-size: 14px; flex-shrink: 0; }
+.obs-name { flex: 1; font-weight: 600; }
+.obs-tier { font-size: 10px; font-weight: 700; padding: 1px 5px; border-radius: 3px; }
+.obs-val  { font-size: 11px; font-weight: 700; min-width: 38px; text-align: right; }
+
+/* GRIDS */
+.grids-zone { flex: 1; display: flex; flex-direction: column; padding: 10px; gap: 9px; }
+.grids-row  { display: flex; gap: 9px; flex: 1; }
+.grid-2x2   { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 9px; flex: 1; }
+
+.grid-cell { flex: 1; border: 1px solid; border-radius: 6px; display: flex; flex-direction: column; min-height: 70px; }
+.grid-head { border-bottom: 1px solid; padding: 5px 10px; font-size: 12px; font-weight: 600; display: flex; justify-content: space-between; align-items: center; border-radius: 5px 5px 0 0; }
+.grid-tools { display: flex; gap: 6px; font-size: 13px; }
+.grid-body  { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; border-radius: 0 0 5px 5px; }
+
+/* BADGES */
+.tier-row { display: flex; gap: 7px; flex-shrink: 0; }
+.badge    { padding: 4px 10px; border-radius: 5px; font-size: 12px; font-weight: 700; border: 1px solid; }
+
+/* RESULT BAND */
+.band { border: 1px solid; border-radius: 6px; padding: 8px 14px; display: flex; align-items: center; gap: 14px; font-size: 12px; flex-shrink: 0; }
+.band-verdict { font-size: 17px; font-weight: 900; }
+.band-product { font-size: 13px; font-weight: 700; }
+.band-llm     { font-size: 11px; flex: 1; }
+
+/* STATUS BAR */
+.statusbar {
+  border-top: 1px solid; padding: 5px 16px; font-size: 12px;
+  display: flex; gap: 16px; align-items: center;
+}
+.sb-div { width: 1px; height: 14px; }
+.sb-user { display: flex; gap: 6px; align-items: center; font-weight: 700; }
+.sb-role { font-size: 11px; font-weight: 700; padding: 1px 7px; border-radius: 3px; border: 1px solid; }
+
+/* INSPECTION */
+.insp-topbar { padding: 7px 16px; display: flex; align-items: center; gap: 10px; border-bottom: 2px solid; }
+.prod-badge  { border: 1px solid; border-radius: 5px; padding: 4px 13px; font-size: 14px; font-weight: 700; }
+.state-badge { border: 1px solid; border-radius: 5px; padding: 4px 10px; font-size: 13px; font-weight: 700; }
+.nok-badge   { border: 1px solid; border-radius: 5px; padding: 4px 10px; font-size: 13px; font-weight: 700; }
+.hint-badge  { font-size: 11px; border: 1px dashed; padding: 3px 10px; border-radius: 4px; }
+.esc-hint    { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 4px; border: 1px solid; }
+
+.grid-cell.nok-hl { border-width: 2px; }
+
+/* ══════════ LIGHT ══════════ */
+.L { background:#fff; color:#111; border:1px solid #e0e0e0; }
+.L .navbar      { background:#f6f6f6; border-color:#e0e0e0; }
+.L .nav-tab     { color:#666; }
+.L .nav-tab:hover { color:#111; background:#eee; }
+.L .nav-tab.active { color:#1d4ed8; border-bottom-color:#1d4ed8; }
+.L .insp-tab    { color:#1d4ed8; border-bottom-color:#1d4ed8; }
+.L .kbd-tag      { background:#1d4ed8; color:#fff; }
+.L .ctrl-bar    { background:#fafafa; border-color:#e0e0e0; }
+.L .btn-sm      { background:#f0f0f0; color:#333; border:1px solid #ccc; }
+.L .btn-act     { background:#eff6ff; color:#1d4ed8; border-color:#1d4ed8; }
+.L .sep         { background:#ddd; }
+.L .body-wrap   { background:#fff; }
+.L .tel-panel   { background:#f8f8f8; border-color:#e0e0e0; }
+.L .tel-sec     { background:#fff; border-color:#e0e0e0; }
+.L .tel-drag-handle { background:#f4f4f4; border-color:#e0e0e0; }
+.L .tel-sec.iq  { border-color:#93c5fd; }
+.L .tel-sec.iq .tel-drag-handle { background:#eff6ff; border-color:#93c5fd; }
+.L .tel-title   { color:#999; }
+.L .tel-title.iq { color:#1d4ed8; }
+.L .tel-row span:first-child { color:#666; }
+.L .tel-row span:last-child  { color:#111; }
+.L .gauge-bar   { background:#eee; }
+.L .ref-row     { color:#666; }
+.L .ref-val     { color:#111; }
+.L .ref-hint    { color:#aaa; }
+.L .obs-row     { border-color:#f0f0f0; }
+.L .ok-val      { color:#16a34a; }
+.L .warn-val    { color:#ea580c; }
+.L .err-val     { color:#dc2626; }
+.L .badge.bc    { background:#fef2f2; color:#b91c1c; border-color:#fca5a5; }
+.L .badge.bm    { background:#fff7ed; color:#c2410c; border-color:#fed7aa; }
+.L .badge.bn    { background:#eff6ff; color:#1d4ed8; border-color:#93c5fd; }
+.L .grid-cell   { background:#fafafa; border-color:#e0e0e0; }
+.L .grid-head   { background:#f0f0f0; border-color:#e0e0e0; color:#444; }
+.L .grid-tools  { color:#bbb; }
+.L .grid-body   { color:#ddd; background:#fafafa; }
+.L .grid-cell.nok-hl { border-color:#dc2626; }
+.L .grid-head.nok-hl { background:#fef2f2; color:#dc2626; border-color:#fca5a5; }
+.L .grid-body.nok    { color:#fca5a5; }
+.L .band.ok     { background:#f0fdf4; border-color:#86efac; }
+.L .band.nok    { background:#fef2f2; border-color:#fca5a5; }
+.L .band-verdict.ok  { color:#16a34a; }
+.L .band-verdict.nok { color:#dc2626; }
+.L .band-product { color:#111; }
+.L .band-llm    { color:#777; }
+.L .statusbar   { background:#f6f6f6; border-color:#e0e0e0; color:#666; }
+.L .sb-div      { background:#ddd; }
+.L .sb-user     { color:#111; }
+.L .sb-role     { background:#f0f0f0; color:#666; border-color:#ddd; }
+.L .insp-topbar { background:#f6f6f6; border-color:#e0e0e0; }
+.L .prod-badge  { background:#fff; border-color:#ccc; color:#111; }
+.L .state-badge { background:#f0fdf4; border-color:#86efac; color:#15803d; }
+.L .nok-badge   { background:#fef2f2; border-color:#fca5a5; color:#dc2626; }
+.L .hint-badge  { color:#aaa; border-color:#ddd; }
+.L .esc-hint    { background:#f0f0f0; color:#666; border-color:#ccc; }
+/* obs tiers light */
+.L .t-c { background:#fef2f2; color:#b91c1c; }
+.L .t-m { background:#fff7ed; color:#c2410c; }
+.L .t-n { background:#eff6ff; color:#1d4ed8; }
+.L .drag-dots { color:#999; }
+
+/* ══════════ DARK ══════════ */
+.D { background:#0d1117; color:#e6edf3; border:1px solid #30363d; }
+.D .navbar      { background:#161b22; border-color:#30363d; }
+.D .nav-tab     { color:#8b949e; }
+.D .nav-tab:hover { color:#e6edf3; background:#1f2937; }
+.D .nav-tab.active { color:#06b6d4; border-bottom-color:#06b6d4; }
+.D .insp-tab    { color:#06b6d4; border-bottom-color:#06b6d4; }
+.D .kbd-tag      { background:#06b6d4; color:#000; }
+.D .ctrl-bar    { background:#0d1117; border-color:#30363d; }
+.D .btn-sm      { background:#21262d; color:#c9d1d9; border:1px solid #30363d; }
+.D .btn-act     { background:#0e2a3a; color:#06b6d4; border-color:#06b6d4; }
+.D .sep         { background:#30363d; }
+.D .body-wrap   { background:#0d1117; }
+.D .tel-panel   { background:#0d1117; border-color:#30363d; }
+.D .tel-sec     { background:#161b22; border-color:#30363d; }
+.D .tel-drag-handle { background:#1f2937; border-color:#30363d; }
+.D .tel-sec.iq  { border-color:#0e7490; }
+.D .tel-sec.iq .tel-drag-handle { background:#0c1e2a; border-color:#0e7490; }
+.D .tel-title   { color:#8b949e; }
+.D .tel-title.iq { color:#06b6d4; }
+.D .tel-row span:first-child { color:#8b949e; }
+.D .tel-row span:last-child  { color:#e6edf3; }
+.D .gauge-bar   { background:#21262d; }
+.D .ref-row     { color:#8b949e; }
+.D .ref-val     { color:#e6edf3; }
+.D .ref-hint    { color:#484f58; }
+.D .obs-row     { border-color:#21262d; }
+.D .ok-val      { color:#4ade80; }
+.D .warn-val    { color:#fb923c; }
+.D .err-val     { color:#f87171; }
+.D .badge.bc    { background:#1c0a0a; color:#fca5a5; border-color:#7f1d1d; }
+.D .badge.bm    { background:#1c1000; color:#fcd34d; border-color:#78350f; }
+.D .badge.bn    { background:#041020; color:#93c5fd; border-color:#1e3a5f; }
+.D .grid-cell   { background:#010409; border-color:#30363d; }
+.D .grid-head   { background:#161b22; border-color:#30363d; color:#8b949e; }
+.D .grid-tools  { color:#484f58; }
+.D .grid-body   { color:#21262d; background:#010409; }
+.D .grid-cell.nok-hl { border-color:#f87171; }
+.D .grid-head.nok-hl { background:#1a0505; color:#f87171; border-color:#7f1d1d; }
+.D .grid-body.nok    { color:#7f1d1d; }
+.D .band.ok     { background:#031a0f; border-color:#166534; }
+.D .band.nok    { background:#1a0505; border-color:#7f1d1d; }
+.D .band-verdict.ok  { color:#4ade80; }
+.D .band-verdict.nok { color:#f87171; }
+.D .band-product { color:#e6edf3; }
+.D .band-llm    { color:#8b949e; }
+.D .statusbar   { background:#0d1117; border-color:#30363d; color:#8b949e; }
+.D .sb-div      { background:#30363d; }
+.D .sb-user     { color:#e6edf3; }
+.D .sb-role     { background:#21262d; color:#8b949e; border-color:#30363d; }
+.D .insp-topbar { background:#161b22; border-color:#30363d; }
+.D .prod-badge  { background:#21262d; border-color:#30363d; color:#e6edf3; }
+.D .state-badge { background:#031a0f; border-color:#166534; color:#4ade80; }
+.D .nok-badge   { background:#1a0505; border-color:#7f1d1d; color:#f87171; }
+.D .hint-badge  { color:#484f58; border-color:#30363d; }
+.D .esc-hint    { background:#21262d; color:#8b949e; border-color:#30363d; }
+/* obs tiers dark */
+.D .t-c { background:#1c0a0a; color:#fca5a5; }
+.D .t-m { background:#1c1000; color:#fcd34d; }
+.D .t-n { background:#041020; color:#93c5fd; }
+.D .drag-dots { color:#484f58; }
+</style>
+</head>
+<body>
+
+<script>
+function initDrag(panelId) {
+  const panel = document.getElementById(panelId);
+  let dragged = null;
+
+  panel.querySelectorAll('.tel-sec').forEach(sec => {
+    sec.setAttribute('draggable', true);
+
+    sec.addEventListener('dragstart', e => {
+      dragged = sec;
+      setTimeout(() => sec.classList.add('dragging'), 0);
+    });
+    sec.addEventListener('dragend', () => {
+      sec.classList.remove('dragging');
+      panel.querySelectorAll('.tel-sec').forEach(s => s.classList.remove('drag-over'));
+      dragged = null;
+    });
+    sec.addEventListener('dragover', e => {
+      e.preventDefault();
+      if (sec !== dragged) sec.classList.add('drag-over');
+    });
+    sec.addEventListener('dragleave', () => sec.classList.remove('drag-over'));
+    sec.addEventListener('drop', e => {
+      e.preventDefault();
+      sec.classList.remove('drag-over');
+      if (dragged && sec !== dragged) {
+        const all = [...panel.querySelectorAll('.tel-sec')];
+        const iDrag = all.indexOf(dragged);
+        const iDrop = all.indexOf(sec);
+        if (iDrag < iDrop) panel.insertBefore(dragged, sec.nextSibling);
+        else panel.insertBefore(dragged, sec);
+      }
+    });
+  });
+}
+window.addEventListener('DOMContentLoaded', () => {
+  ['tel-L-nav','tel-D-nav','tel-L-insp','tel-D-insp'].forEach(initDrag);
+});
+</script>
+
+<!-- ══════════════════════════
+     LIGHT — NAVIGATION
+══════════════════════════ -->
+<div>
+<div class="theme-label">☀ Thème Clair</div>
+<div class="ivs L">
+  <div class="navbar">
+    <div class="nav-tab active">📦 Produits</div>
+    <div class="nav-tab">👥 Opérateurs</div>
+    <div class="nav-tab">📊 Rapports</div>
+    <div class="nav-tab">📡 GPIO</div>
+    <div class="nav-tab">🚀 Fleet</div>
+    <div class="nav-tab">⚙ Paramètres</div>
+    <div class="spacer"></div>
+    <div class="insp-tab">🔍 Inspection <span class="kbd-tag">F11</span></div>
+  </div>
+  <div class="ctrl-bar">
+    <button class="btn btn-start">▶ Démarrer  F5</button>
+    <button class="btn btn-stop">■ Arrêter  F6</button>
+    <div class="sep"></div>
+    <button class="btn-sm">⏱ Intervalle : 5s ▼</button>
+    <div class="sep"></div>
+    <button class="btn-act">⊞ 2 Grids</button>
+    <button class="btn-sm">Preset : Standard ▼</button>
+    <div class="spacer"></div>
+    <span style="font-size:12px;font-weight:600;color:#888">🪞 Tapis P208 — Lion  v3.1</span>
+  </div>
+  <div class="body-wrap">
+    <div class="tel-panel" id="tel-L-nav">
+
+      <div class="tel-sec">
+        <div class="tel-drag-handle"><span class="drag-dots">⠿</span><span class="tel-title">📊 Session</span></div>
+        <div class="tel-body">
+          <div class="tel-row"><span>Total</span><span>145</span></div>
+          <div class="tel-row"><span>OK</span><span class="ok-val">142</span></div>
+          <div class="tel-row"><span>NOK</span><span class="err-val">3</span></div>
+          <div class="tel-row"><span>REVIEW</span><span class="warn-val">0</span></div>
+          <div class="tel-row"><span>Taux OK</span><span class="ok-val">97.9%</span></div>
+        </div>
+      </div>
+
+      <div class="tel-sec">
+        <div class="tel-drag-handle"><span class="drag-dots">⠿</span><span class="tel-title">⚡ Pipeline</span></div>
+        <div class="tel-body">
+          <div class="tel-row"><span>avg</span><span class="ok-val">142ms</span></div>
+          <div class="tel-row"><span>FPS</span><span class="ok-val">28</span></div>
+          <div class="tel-row"><span>SIFT</span><span>38ms</span></div>
+          <div class="tel-row"><span>YOLO</span><span>61ms</span></div>
+          <div class="tel-row"><span>Color</span><span>12ms</span></div>
+          <div class="tel-row"><span>Surface</span><span>18ms</span></div>
+        </div>
+      </div>
+
+      <div class="tel-sec iq">
+        <div class="tel-drag-handle"><span class="drag-dots">⠿</span><span class="tel-title iq">📷 Image Qualité</span></div>
+        <div class="tel-body">
+          <div class="ref-row"><span>Luminosité</span><span class="ref-val">127</span><span class="d-ok">+2 ✓</span></div>
+          <div class="ref-hint">Réf. 125 ±15</div>
+          <div class="gauge-wrap"><div class="gauge-bar"><div class="gauge-fill g-ok" style="width:65%"></div></div></div>
+          <div class="ref-row"><span>Contraste</span><span class="ref-val">42</span><span class="d-ok">+2 ✓</span></div>
+          <div class="ref-hint">Réf. 40 ±8</div>
+          <div class="gauge-wrap"><div class="gauge-bar"><div class="gauge-fill g-ok" style="width:72%"></div></div></div>
+          <div class="ref-row"><span>Netteté</span><span class="ref-val">318</span><span class="d-warn">-8% ⚠</span></div>
+          <div class="ref-hint">Réf. 345 ±30</div>
+          <div class="gauge-wrap"><div class="gauge-bar"><div class="gauge-fill g-warn" style="width:54%"></div></div></div>
+          <div class="ref-row"><span>Exposition</span><span class="ref-val">1/500s</span></div>
+          <div class="ref-row"><span>Gain</span><span class="ref-val">1.2×</span></div>
+        </div>
+      </div>
+
+      <div class="tel-sec">
+        <div class="tel-drag-handle"><span class="drag-dots">⠿</span><span class="tel-title">🔬 Observers</span></div>
+        <div class="tel-body">
+          <div class="obs-row">
+            <span class="obs-dot ok-val">●</span>
+            <span class="obs-name">YOLO Logo</span>
+            <span class="obs-tier t-c">CRIT</span>
+            <span class="obs-val ok-val">0.94</span>
+          </div>
+          <div class="obs-row">
+            <span class="obs-dot ok-val">●</span>
+            <span class="obs-name">SIFT Align</span>
+            <span class="obs-tier t-c">CRIT</span>
+            <span class="obs-val ok-val">±1.3mm</span>
+          </div>
+          <div class="obs-row">
+            <span class="obs-dot ok-val">●</span>
+            <span class="obs-name">Color ΔE</span>
+            <span class="obs-tier t-m">MAJ</span>
+            <span class="obs-val ok-val">2.1</span>
+          </div>
+          <div class="obs-row">
+            <span class="obs-dot err-val">●</span>
+            <span class="obs-name">Caliper</span>
+            <span class="obs-tier t-m">MAJ</span>
+            <span class="obs-val err-val">803mm</span>
+          </div>
+          <div class="obs-row">
+            <span class="obs-dot ok-val">●</span>
+            <span class="obs-name">Surface</span>
+            <span class="obs-tier t-n">MIN</span>
+            <span class="obs-val ok-val">0.87</span>
+          </div>
+          <div class="obs-row">
+            <span class="obs-dot" style="color:#aaa">●</span>
+            <span class="obs-name" style="color:#aaa">OCR</span>
+            <span class="obs-tier" style="background:#f0f0f0;color:#aaa">MIN</span>
+            <span class="obs-val" style="color:#aaa">—</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="grids-zone">
+      <div class="tier-row">
+        <span class="badge bc">CRITICAL ✅ 0.94</span>
+        <span class="badge bm">MAJOR ✅ 0.87</span>
+        <span class="badge bn">MINOR ✅ 0.91</span>
+      </div>
+      <div class="grids-row">
+        <div class="grid-cell"><div class="grid-head"><span>📷 Live Raw</span><div class="grid-tools"><span>🔍</span><span>⛶</span><span>📸</span></div></div><div class="grid-body">[ CAMERA FEED ]</div></div>
+        <div class="grid-cell"><div class="grid-head"><span>🎯 ROI Overlay</span><div class="grid-tools"><span>🔍</span><span>⛶</span><span>📸</span></div></div><div class="grid-body">[ ROI ZONES ]</div></div>
+      </div>
+      <div class="band ok">
+        <span class="band-verdict ok">● OK</span>
+        <span class="band-product">Tapis P208 — Lion</span>
+        <span class="band-llm">💬 Broderie conforme. ΔE=2.1. Position ±1.3mm</span>
+      </div>
+    </div>
+  </div>
+  <div class="statusbar">
+    <div class="sb-user">👤 Ahmed Ben Ali <span class="sb-role">OPERATOR</span></div>
+    <div class="sb-div"></div>
+    <span>CPU <span class="warn-val">62%</span></span>
+    <span>RAM <b>3.2GB</b></span>
+    <span>TEMP <span class="warn-val">58°C</span></span>
+    <span>DISK <b>45GB</b></span>
+    <span>FPS <span class="ok-val">28</span></span>
+    <div class="sb-div"></div>
+    <span>UP <b>4h 12m</b></span>
+    <div class="spacer"></div>
+    <span style="color:#ccc;font-size:11px">⠿ Panels déplaçables par glisser-déposer</span>
+    <div class="sb-div"></div>
+    <span style="color:#bbb">v9.0.0</span>
+  </div>
+</div>
+
+<!-- LIGHT INSPECTION -->
+<div style="margin-top:14px">
+<div class="theme-label" style="font-size:11px;color:#ddd">☀ Inspection — Clair</div>
+<div class="ivs L" style="border-top:3px solid #1d4ed8;">
+  <div class="insp-topbar">
+    <div class="prod-badge">🪞 Tapis P208 — Lion  v3.1</div>
+    <div class="state-badge">● RUNNING</div>
+    <div class="nok-badge">NOK : 3</div>
+    <div class="spacer"></div>
+    <button class="btn btn-start" style="padding:5px 13px">▶ F5</button>
+    <button class="btn btn-stop"  style="padding:5px 13px">■ F6</button>
+    <button class="btn-sm">⏱ 5s ▼</button>
+    <button class="btn-act">⊞ 4 ▼</button>
+    <button class="btn-sm">Standard ▼</button>
+    <div class="hint-badge">F1 · F7 ✓ · F8 ✗ · Ctrl+1..4</div>
+    <div class="esc-hint">Esc ← Quitter</div>
+  </div>
+  <div class="body-wrap">
+    <div class="tel-panel" id="tel-L-insp" style="width:200px;">
+      <div class="tel-sec">
+        <div class="tel-drag-handle"><span class="drag-dots">⠿</span><span class="tel-title">📊 Session</span></div>
+        <div class="tel-body">
+          <div class="tel-row"><span>OK</span><span class="ok-val">142</span></div>
+          <div class="tel-row"><span>NOK</span><span class="err-val">3</span></div>
+          <div class="tel-row"><span>Taux OK</span><span class="ok-val">97.9%</span></div>
+        </div>
+      </div>
+      <div class="tel-sec">
+        <div class="tel-drag-handle"><span class="drag-dots">⠿</span><span class="tel-title">⚡ Pipeline</span></div>
+        <div class="tel-body">
+          <div class="tel-row"><span>avg</span><span class="ok-val">142ms</span></div>
+          <div class="tel-row"><span>FPS</span><span class="ok-val">28</span></div>
+          <div class="tel-row"><span>SIFT</span><span>38ms</span></div>
+          <div class="tel-row"><span>YOLO</span><span>61ms</span></div>
+        </div>
+      </div>
+      <div class="tel-sec iq">
+        <div class="tel-drag-handle"><span class="drag-dots">⠿</span><span class="tel-title iq">📷 Image Qualité</span></div>
+        <div class="tel-body">
+          <div class="ref-row"><span>Luminosité</span><span class="ref-val">127</span><span class="d-ok">✓</span></div>
+          <div class="gauge-wrap"><div class="gauge-bar"><div class="gauge-fill g-ok" style="width:65%"></div></div></div>
+          <div class="ref-row"><span>Contraste</span><span class="ref-val">42</span><span class="d-ok">✓</span></div>
+          <div class="gauge-wrap"><div class="gauge-bar"><div class="gauge-fill g-ok" style="width:72%"></div></div></div>
+          <div class="ref-row"><span>Netteté</span><span class="ref-val">318</span><span class="d-warn">⚠</span></div>
+          <div class="gauge-wrap"><div class="gauge-bar"><div class="gauge-fill g-warn" style="width:54%"></div></div></div>
+          <div class="ref-row"><span>Exposition</span><span class="ref-val">1/500s</span></div>
+        </div>
+      </div>
+      <div class="tel-sec">
+        <div class="tel-drag-handle"><span class="drag-dots">⠿</span><span class="tel-title">🔬 Observers</span></div>
+        <div class="tel-body">
+          <div class="obs-row"><span class="obs-dot err-val">●</span><span class="obs-name">YOLO Logo</span><span class="obs-tier t-c">CRIT</span><span class="obs-val err-val">0.21</span></div>
+          <div class="obs-row"><span class="obs-dot" style="color:#aaa">●</span><span class="obs-name" style="color:#aaa">SIFT Align</span><span class="obs-tier t-c">CRIT</span><span class="obs-val" style="color:#aaa">⏳</span></div>
+          <div class="obs-row"><span class="obs-dot" style="color:#aaa">●</span><span class="obs-name" style="color:#aaa">Color ΔE</span><span class="obs-tier t-m">MAJ</span><span class="obs-val" style="color:#aaa">⏳</span></div>
+          <div class="obs-row"><span class="obs-dot" style="color:#aaa">●</span><span class="obs-name" style="color:#aaa">Caliper</span><span class="obs-tier t-m">MAJ</span><span class="obs-val" style="color:#aaa">⏳</span></div>
+          <div class="obs-row"><span class="obs-dot" style="color:#aaa">●</span><span class="obs-name" style="color:#aaa">Surface</span><span class="obs-tier t-n">MIN</span><span class="obs-val" style="color:#aaa">⏳</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="grids-zone">
+      <div class="tier-row">
+        <span class="badge bc">CRITICAL ❌ 0.21</span>
+        <span class="badge bm">MAJOR ⏳</span>
+        <span class="badge bn">MINOR ⏳</span>
+        <span style="font-size:12px;color:#999;margin-left:auto">Tapis P208 · Logo Lion</span>
+      </div>
+      <div class="grid-2x2">
+        <div class="grid-cell"><div class="grid-head"><span>📷 Live Raw</span><div class="grid-tools"><span>🔍</span><span>⛶</span><span>📸</span></div></div><div class="grid-body nok">[ DEFECT ]</div></div>
+        <div class="grid-cell nok-hl"><div class="grid-head nok-hl"><span>🔍 Logo Zoom ×4</span><div class="grid-tools"><span>🔍</span><span>⛶</span><span>📸</span></div></div><div class="grid-body nok">[ AUTO-ZOOM NOK ]</div></div>
+        <div class="grid-cell"><div class="grid-head"><span>🔬 Differential</span><div class="grid-tools"><span>🔍</span><span>⛶</span><span>📸</span></div></div><div class="grid-body">[ DIFF MAP ]</div></div>
+        <div class="grid-cell"><div class="grid-head"><span>📋 Reference</span><div class="grid-tools"><span>🔍</span><span>⛶</span><span>📸</span></div></div><div class="grid-body">[ REF IMAGE ]</div></div>
+      </div>
+      <div class="band nok">
+        <span class="band-verdict nok">● NOK</span>
+        <span style="color:#b91c1c;font-weight:800;font-size:13px">CRITICAL</span>
+        <span class="band-product">LOGO_LION_ABSENT</span>
+        <span class="band-llm">💬 Logo non détecté. Conf=0.21 &lt; seuil 0.70. Vérifier positionnement tapis.</span>
+        <span style="font-size:11px;color:#aaa;white-space:nowrap;border:1px solid #ddd;padding:3px 9px;border-radius:4px">Suivant 2s…</span>
+      </div>
+    </div>
+  </div>
+  <div class="statusbar">
+    <span>👤 <b>Ahmed</b></span><div class="sb-div"></div>
+    <span>CPU <span class="warn-val">62%</span></span>
+    <span>RAM <b>3.2GB</b></span>
+    <span>TEMP <span class="warn-val">58°C</span></span>
+    <span>FPS <span class="ok-val">28</span></span>
+    <div class="spacer"></div>
+    <span style="color:#999;font-weight:700">FULLSCREEN · Esc للخروج</span>
+  </div>
+</div></div>
+</div>
+
+<!-- ══════════════════════════
+     DARK — NAVIGATION
+══════════════════════════ -->
+<div>
+<div class="theme-label">🌙 Thème Sombre</div>
+<div class="ivs D">
+  <div class="navbar">
+    <div class="nav-tab active">📦 Produits</div>
+    <div class="nav-tab">👥 Opérateurs</div>
+    <div class="nav-tab">📊 Rapports</div>
+    <div class="nav-tab">📡 GPIO</div>
+    <div class="nav-tab">🚀 Fleet</div>
+    <div class="nav-tab">⚙ Paramètres</div>
+    <div class="spacer"></div>
+    <div class="insp-tab">🔍 Inspection <span class="kbd-tag">F11</span></div>
+  </div>
+  <div class="ctrl-bar">
+    <button class="btn btn-start">▶ Démarrer  F5</button>
+    <button class="btn btn-stop">■ Arrêter  F6</button>
+    <div class="sep"></div>
+    <button class="btn-sm">⏱ Intervalle : 5s ▼</button>
+    <div class="sep"></div>
+    <button class="btn-act">⊞ 2 Grids</button>
+    <button class="btn-sm">Preset : Standard ▼</button>
+    <div class="spacer"></div>
+    <span style="font-size:12px;font-weight:600;color:#8b949e">🪞 Tapis P208 — Lion  v3.1</span>
+  </div>
+  <div class="body-wrap">
+    <div class="tel-panel" id="tel-D-nav">
+      <div class="tel-sec">
+        <div class="tel-drag-handle"><span class="drag-dots">⠿</span><span class="tel-title">📊 Session</span></div>
+        <div class="tel-body">
+          <div class="tel-row"><span>Total</span><span>145</span></div>
+          <div class="tel-row"><span>OK</span><span class="ok-val">142</span></div>
+          <div class="tel-row"><span>NOK</span><span class="err-val">3</span></div>
+          <div class="tel-row"><span>REVIEW</span><span class="warn-val">0</span></div>
+          <div class="tel-row"><span>Taux OK</span><span class="ok-val">97.9%</span></div>
+        </div>
+      </div>
+      <div class="tel-sec">
+        <div class="tel-drag-handle"><span class="drag-dots">⠿</span><span class="tel-title">⚡ Pipeline</span></div>
+        <div class="tel-body">
+          <div class="tel-row"><span>avg</span><span class="ok-val">142ms</span></div>
+          <div class="tel-row"><span>FPS</span><span class="ok-val">28</span></div>
+          <div class="tel-row"><span>SIFT</span><span>38ms</span></div>
+          <div class="tel-row"><span>YOLO</span><span>61ms</span></div>
+          <div class="tel-row"><span>Color</span><span>12ms</span></div>
+          <div class="tel-row"><span>Surface</span><span>18ms</span></div>
+        </div>
+      </div>
+      <div class="tel-sec iq">
+        <div class="tel-drag-handle"><span class="drag-dots">⠿</span><span class="tel-title iq">📷 Image Qualité</span></div>
+        <div class="tel-body">
+          <div class="ref-row"><span>Luminosité</span><span class="ref-val">127</span><span class="d-ok">+2 ✓</span></div>
+          <div class="ref-hint">Réf. 125 ±15</div>
+          <div class="gauge-wrap"><div class="gauge-bar"><div class="gauge-fill g-ok" style="width:65%"></div></div></div>
+          <div class="ref-row"><span>Contraste</span><span class="ref-val">42</span><span class="d-ok">+2 ✓</span></div>
+          <div class="ref-hint">Réf. 40 ±8</div>
+          <div class="gauge-wrap"><div class="gauge-bar"><div class="gauge-fill g-ok" style="width:72%"></div></div></div>
+          <div class="ref-row"><span>Netteté</span><span class="ref-val">318</span><span class="d-warn">-8% ⚠</span></div>
+          <div class="ref-hint">Réf. 345 ±30</div>
+          <div class="gauge-wrap"><div class="gauge-bar"><div class="gauge-fill g-warn" style="width:54%"></div></div></div>
+          <div class="ref-row"><span>Exposition</span><span class="ref-val">1/500s</span></div>
+          <div class="ref-row"><span>Gain</span><span class="ref-val">1.2×</span></div>
+        </div>
+      </div>
+      <div class="tel-sec">
+        <div class="tel-drag-handle"><span class="drag-dots">⠿</span><span class="tel-title">🔬 Observers</span></div>
+        <div class="tel-body">
+          <div class="obs-row"><span class="obs-dot ok-val">●</span><span class="obs-name">YOLO Logo</span><span class="obs-tier t-c">CRIT</span><span class="obs-val ok-val">0.94</span></div>
+          <div class="obs-row"><span class="obs-dot ok-val">●</span><span class="obs-name">SIFT Align</span><span class="obs-tier t-c">CRIT</span><span class="obs-val ok-val">±1.3mm</span></div>
+          <div class="obs-row"><span class="obs-dot ok-val">●</span><span class="obs-name">Color ΔE</span><span class="obs-tier t-m">MAJ</span><span class="obs-val ok-val">2.1</span></div>
+          <div class="obs-row"><span class="obs-dot err-val">●</span><span class="obs-name">Caliper</span><span class="obs-tier t-m">MAJ</span><span class="obs-val err-val">803mm</span></div>
+          <div class="obs-row"><span class="obs-dot ok-val">●</span><span class="obs-name">Surface</span><span class="obs-tier t-n">MIN</span><span class="obs-val ok-val">0.87</span></div>
+          <div class="obs-row"><span class="obs-dot" style="color:#484f58">●</span><span class="obs-name" style="color:#484f58">OCR</span><span class="obs-tier" style="background:#21262d;color:#484f58">MIN</span><span class="obs-val" style="color:#484f58">—</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="grids-zone">
+      <div class="tier-row">
+        <span class="badge bc">CRITICAL ✅ 0.94</span>
+        <span class="badge bm">MAJOR ✅ 0.87</span>
+        <span class="badge bn">MINOR ✅ 0.91</span>
+      </div>
+      <div class="grids-row">
+        <div class="grid-cell"><div class="grid-head"><span>📷 Live Raw</span><div class="grid-tools"><span>🔍</span><span>⛶</span><span>📸</span></div></div><div class="grid-body">[ CAMERA FEED ]</div></div>
+        <div class="grid-cell"><div class="grid-head"><span>🎯 ROI Overlay</span><div class="grid-tools"><span>🔍</span><span>⛶</span><span>📸</span></div></div><div class="grid-body">[ ROI ZONES ]</div></div>
+      </div>
+      <div class="band ok">
+        <span class="band-verdict ok">● OK</span>
+        <span class="band-product">Tapis P208 — Lion</span>
+        <span class="band-llm">💬 Broderie conforme. ΔE=2.1. Position ±1.3mm</span>
+      </div>
+    </div>
+  </div>
+  <div class="statusbar">
+    <div class="sb-user">👤 Ahmed Ben Ali <span class="sb-role">OPERATOR</span></div>
+    <div class="sb-div"></div>
+    <span>CPU <span class="warn-val">62%</span></span>
+    <span>RAM <b style="color:#e6edf3">3.2GB</b></span>
+    <span>TEMP <span class="warn-val">58°C</span></span>
+    <span>DISK <b style="color:#e6edf3">45GB</b></span>
+    <span>FPS <span class="ok-val">28</span></span>
+    <div class="sb-div"></div>
+    <span>UP <b style="color:#e6edf3">4h 12m</b></span>
+    <div class="spacer"></div>
+    <span style="color:#484f58;font-size:11px">⠿ Panels déplaçables</span>
+    <div class="sb-div"></div>
+    <span style="color:#484f58">v9.0.0</span>
+  </div>
+</div>
+
+<!-- DARK INSPECTION -->
+<div style="margin-top:14px">
+<div class="theme-label" style="font-size:11px;color:#ddd">🌙 Inspection — Sombre</div>
+<div class="ivs D" style="border-top:3px solid #06b6d4;">
+  <div class="insp-topbar">
+    <div class="prod-badge">🪞 Tapis P208 — Lion  v3.1</div>
+    <div class="state-badge">● RUNNING</div>
+    <div class="nok-badge">NOK : 3</div>
+    <div class="spacer"></div>
+    <button class="btn btn-start" style="padding:5px 13px">▶ F5</button>
+    <button class="btn btn-stop"  style="padding:5px 13px">■ F6</button>
+    <button class="btn-sm">⏱ 5s ▼</button>
+    <button class="btn-act">⊞ 4 ▼</button>
+    <button class="btn-sm">Standard ▼</button>
+    <div class="hint-badge">F1 · F7 ✓ · F8 ✗ · Ctrl+1..4</div>
+    <div class="esc-hint">Esc ← Quitter</div>
+  </div>
+  <div class="body-wrap">
+    <div class="tel-panel" id="tel-D-insp" style="width:200px;">
+      <div class="tel-sec">
+        <div class="tel-drag-handle"><span class="drag-dots">⠿</span><span class="tel-title">📊 Session</span></div>
+        <div class="tel-body">
+          <div class="tel-row"><span>OK</span><span class="ok-val">142</span></div>
+          <div class="tel-row"><span>NOK</span><span class="err-val">3</span></div>
+          <div class="tel-row"><span>Taux OK</span><span class="ok-val">97.9%</span></div>
+        </div>
+      </div>
+      <div class="tel-sec">
+        <div class="tel-drag-handle"><span class="drag-dots">⠿</span><span class="tel-title">⚡ Pipeline</span></div>
+        <div class="tel-body">
+          <div class="tel-row"><span>avg</span><span class="ok-val">142ms</span></div>
+          <div class="tel-row"><span>FPS</span><span class="ok-val">28</span></div>
+          <div class="tel-row"><span>SIFT</span><span>38ms</span></div>
+          <div class="tel-row"><span>YOLO</span><span>61ms</span></div>
+        </div>
+      </div>
+      <div class="tel-sec iq">
+        <div class="tel-drag-handle"><span class="drag-dots">⠿</span><span class="tel-title iq">📷 Image Qualité</span></div>
+        <div class="tel-body">
+          <div class="ref-row"><span>Luminosité</span><span class="ref-val">127</span><span class="d-ok">✓</span></div>
+          <div class="gauge-wrap"><div class="gauge-bar"><div class="gauge-fill g-ok" style="width:65%"></div></div></div>
+          <div class="ref-row"><span>Contraste</span><span class="ref-val">42</span><span class="d-ok">✓</span></div>
+          <div class="gauge-wrap"><div class="gauge-bar"><div class="gauge-fill g-ok" style="width:72%"></div></div></div>
+          <div class="ref-row"><span>Netteté</span><span class="ref-val">318</span><span class="d-warn">⚠</span></div>
+          <div class="gauge-wrap"><div class="gauge-bar"><div class="gauge-fill g-warn" style="width:54%"></div></div></div>
+          <div class="ref-row"><span>Exposition</span><span class="ref-val">1/500s</span></div>
+        </div>
+      </div>
+      <div class="tel-sec">
+        <div class="tel-drag-handle"><span class="drag-dots">⠿</span><span class="tel-title">🔬 Observers</span></div>
+        <div class="tel-body">
+          <div class="obs-row"><span class="obs-dot err-val">●</span><span class="obs-name">YOLO Logo</span><span class="obs-tier t-c">CRIT</span><span class="obs-val err-val">0.21</span></div>
+          <div class="obs-row"><span class="obs-dot" style="color:#484f58">●</span><span class="obs-name" style="color:#484f58">SIFT Align</span><span class="obs-tier t-c">CRIT</span><span class="obs-val" style="color:#484f58">⏳</span></div>
+          <div class="obs-row"><span class="obs-dot" style="color:#484f58">●</span><span class="obs-name" style="color:#484f58">Color ΔE</span><span class="obs-tier t-m">MAJ</span><span class="obs-val" style="color:#484f58">⏳</span></div>
+          <div class="obs-row"><span class="obs-dot" style="color:#484f58">●</span><span class="obs-name" style="color:#484f58">Caliper</span><span class="obs-tier t-m">MAJ</span><span class="obs-val" style="color:#484f58">⏳</span></div>
+          <div class="obs-row"><span class="obs-dot" style="color:#484f58">●</span><span class="obs-name" style="color:#484f58">Surface</span><span class="obs-tier t-n">MIN</span><span class="obs-val" style="color:#484f58">⏳</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="grids-zone">
+      <div class="tier-row">
+        <span class="badge bc">CRITICAL ❌ 0.21</span>
+        <span class="badge bm">MAJOR ⏳</span>
+        <span class="badge bn">MINOR ⏳</span>
+        <span style="font-size:12px;color:#484f58;margin-left:auto">Tapis P208 · Logo Lion</span>
+      </div>
+      <div class="grid-2x2">
+        <div class="grid-cell"><div class="grid-head"><span>📷 Live Raw</span><div class="grid-tools"><span>🔍</span><span>⛶</span><span>📸</span></div></div><div class="grid-body nok">[ DEFECT ]</div></div>
+        <div class="grid-cell nok-hl"><div class="grid-head nok-hl"><span>🔍 Logo Zoom ×4</span><div class="grid-tools"><span>🔍</span><span>⛶</span><span>📸</span></div></div><div class="grid-body nok">[ AUTO-ZOOM NOK ]</div></div>
+        <div class="grid-cell"><div class="grid-head"><span>🔬 Differential</span><div class="grid-tools"><span>🔍</span><span>⛶</span><span>📸</span></div></div><div class="grid-body">[ DIFF MAP ]</div></div>
+        <div class="grid-cell"><div class="grid-head"><span>📋 Reference</span><div class="grid-tools"><span>🔍</span><span>⛶</span><span>📸</span></div></div><div class="grid-body">[ REF IMAGE ]</div></div>
+      </div>
+      <div class="band nok">
+        <span class="band-verdict nok">● NOK</span>
+        <span style="color:#f87171;font-weight:800;font-size:13px">CRITICAL</span>
+        <span class="band-product">LOGO_LION_ABSENT</span>
+        <span class="band-llm">💬 Logo non détecté. Conf=0.21 &lt; seuil 0.70. Vérifier positionnement tapis.</span>
+        <span style="font-size:11px;color:#484f58;white-space:nowrap;border:1px solid #30363d;padding:3px 9px;border-radius:4px">Suivant 2s…</span>
+      </div>
+    </div>
+  </div>
+  <div class="statusbar">
+    <span>👤 <b style="color:#e6edf3">Ahmed</b></span>
+    <div class="sb-div"></div>
+    <span>CPU <span class="warn-val">62%</span></span>
+    <span>RAM <b style="color:#e6edf3">3.2GB</b></span>
+    <span>TEMP <span class="warn-val">58°C</span></span>
+    <span>FPS <span class="ok-val">28</span></span>
+    <div class="spacer"></div>
+    <span style="color:#484f58;font-weight:700">FULLSCREEN · Esc للخروج</span>
+  </div>
+</div></div>
+</div>
+
+</body>
+</html>
